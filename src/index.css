@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global CSS reset and base styles - keeping original theme */
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  /* Lavender color scheme */
+  --primary-50: #faf7ff;
+  --primary-100: #f0e6ff;
+  --primary-200: #e6e6fa;
+  --primary-300: #dda0dd;
+  --primary-400: #d8bfd8;
+  --primary-500: #da70d6;
+  --primary-600: #ba55d3;
+  --primary-700: #9932cc;
+  --primary-800: #8b008b;
+  --primary-900: #4b0082;
+
+  color-scheme: light;
+  color: #4a4a4a;
+  background: linear-gradient(135deg, #f8f4ff 0%, #e6e6fa 50%, #dda0dd 100%);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f4ff 0%, #e6e6fa 50%, #dda0dd 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Remove default button and input styles */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-300: #9932cc;
+    --primary-400: #8b008b;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white !important;
+  }
+  
+  .navigation,
+  .chat-input-form,
+  .quote-nav,
+  .menu-toggle {
+    display: none !important;
+  }
+}
