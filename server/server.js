@@ -1,36 +1,15 @@
-console.log("HElllllo")
-const { GoogleGenAI } = require ("@google/genai");
-const dotenv = require ("dotenv");
-dotenv.config(); //load the environment variables from .env!
+//SERVER
+const express = require('express')
+const cors = require('cors')
+const PORT=5000
+const app = express()
+app.use(cors())
+app.use(express.json());
 
-const genAI = new GoogleGenAI({
-    apiKey: process.env.API_KEY,
-});
+app.use('/api/journal', require('./routes/journal'));
 
-async function run() {
-    const chat = genAI.chats.create({
-        model: "gemini-2.5-flash",
-        history: [
-            {
-                role: "user",
-                parts: [{ text: "Hello" }],
-            },
-            {
-                role: "model",
-                parts: [{ text: "Great to meet you. What would you like to know?" }],
-            },
-        ],
-    });
+app.get('/api', (req, res) => {
+  res.send("Here!")
+})
 
-    const response1 = await chat.sendMessage({
-        message: "I have 2 dogs in my house.",
-    });
-    console.log("Chat response 1:", response1.text);
-
-    const response2 = await chat.sendMessage({
-        message: "How many paws are in my house?",
-    });
-    console.log("Chat response 2:", response2.text);
-}
-
-run();
+app.listen(PORT, () => console.log('Server running on http://localhost:5000'))

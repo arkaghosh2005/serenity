@@ -1,67 +1,60 @@
-import { useState, useEffect } from 'react'
-import Navigation from './components/Navigation'
-import Journal from './components/Journal'
-import MoodDashboard from './components/MoodDashboard'
-import Chatbot from './components/Chatbot'
-import MotivationCorner from './components/MotivationCorner'
-import './App.css'
+import { useState, useEffect } from 'react';
+import Navigation from './components/Navigation';
+import Journal from './components/Journal';
+import MoodDashboard from './components/MoodDashboard';
+import Chatbot from './components/Chatbot';
+import MotivationCorner from './components/MotivationCorner';
+import './App.css';
 
 function App() {
-  const [activeSection, setActiveSection] = useState('journal')
-  const [journalEntries, setJournalEntries] = useState([])
-  const [moodData, setMoodData] = useState([])
+  const [activeSection, setActiveSection] = useState('journal');
+  const [journalEntries, setJournalEntries] = useState([]);
+  const [moodData, setMoodData] = useState([]);
 
+  // Load from backend on start
   useEffect(() => {
-    // Load data from localStorage on app start
-    const savedEntries = localStorage.getItem('serenity-journal-entries')
-    const savedMoodData = localStorage.getItem('serenity-mood-data')
-    
-    if (savedEntries) {
-      setJournalEntries(JSON.parse(savedEntries))
-    }
-    
-    if (savedMoodData) {
-      setMoodData(JSON.parse(savedMoodData))
-    }
-  }, [])
+    fetch('http://localhost:5000/api/journal')
+      .then(res => res.json())
+      .then(data => {
+        setJournalEntries(data);
+        setMoodData(data.map(entry => ({
+          date: new Date(entry.timestamp).toLocaleDateString(),
+          mood: entry.mood,
+          sentiment: entry.sentiment
+        })));
+      });
+  }, []);
 
   const addJournalEntry = (entry) => {
-    const newEntry = {
-      id: Date.now(),
-      ...entry,
-      timestamp: new Date().toISOString()
-    }
-    
-    const updatedEntries = [newEntry, ...journalEntries]
-    setJournalEntries(updatedEntries)
-    localStorage.setItem('serenity-journal-entries', JSON.stringify(updatedEntries))
-    
-    // Add mood data point
-    const moodPoint = {
-      date: new Date().toLocaleDateString(),
-      mood: entry.mood,
-      sentiment: entry.sentiment
-    }
-    
-    const updatedMoodData = [moodPoint, ...moodData]
-    setMoodData(updatedMoodData)
-    localStorage.setItem('serenity-mood-data', JSON.stringify(updatedMoodData))
-  }
+    fetch('http://localhost:5000/api/journal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    })
+      .then(res => res.json())
+      .then(newEntry => {
+        setJournalEntries(prev => [newEntry, ...prev]);
+        setMoodData(prev => [
+          { date: new Date(newEntry.timestamp).toLocaleDateString(), mood: newEntry.mood, sentiment: newEntry.sentiment },
+          ...prev
+        ]);
+      });
+  };
 
   const renderActiveSection = () => {
     switch (activeSection) {
       case 'journal':
-        return <Journal onAddEntry={addJournalEntry} entries={journalEntries} />
+        return <Journal onAddEntry={addJournalEntry} entries={journalEntries} />;
       case 'dashboard':
-        return <MoodDashboard moodData={moodData} />
+        return <MoodDashboard moodData={moodData} />;
       case 'chatbot':
-        return <Chatbot currentMood={moodData[0]?.mood || 'neutral'} />
+        return <Chatbot currentMood={moodData[0]?.mood || 'neutral'} />;
       case 'motivation':
-        return <MotivationCorner />
+        return <MotivationCorner />;
       default:
-        return <Journal onAddEntry={addJournalEntry} entries={journalEntries} />
+        return <Journal onAddEntry={addJournalEntry} entries={journalEntries} />;
     }
-  }
+  };
 
   return (
     <div className="app">
@@ -81,7 +74,7 @@ function App() {
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
