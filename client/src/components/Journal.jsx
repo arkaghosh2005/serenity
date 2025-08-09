@@ -1,27 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function Journal({ onAddEntry, entries }) {
+function Journal() {
+  const [entries, setEntries] = useState([])
   const [text, setText] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
-  // Simulated AI mood analysis
-  const analyzeMood = (text) => {
-    const positiveWords = ['happy', 'joy', 'excited', 'wonderful', 'great', 'amazing', 'love', 'grateful', 'blessed', 'peaceful']
-    const negativeWords = ['sad', 'angry', 'frustrated', 'depressed', 'anxious', 'worried', 'stressed', 'overwhelmed', 'tired', 'lonely']
-
-    const words = text.toLowerCase().split(' ')
-    let positiveCount = 0
-    let negativeCount = 0
-
-    words.forEach(word => {
-      if (positiveWords.some(pw => word.includes(pw))) positiveCount++
-      if (negativeWords.some(nw => word.includes(nw))) negativeCount++
-    })
-
-    if (positiveCount > negativeCount) return { mood: 'positive', sentiment: 0.7 + Math.random() * 0.3 }
-    if (negativeCount > positiveCount) return { mood: 'negative', sentiment: 0.1 + Math.random() * 0.4 }
-    return { mood: 'neutral', sentiment: 0.4 + Math.random() * 0.2 }
-  }
+  useEffect(() => {
+    fetch('/api/journal')
+      .then(res => res.json())
+      .then(data => setEntries(data))
+      .catch(err => console.error('Error fetching journal entries:', err))
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -29,16 +18,22 @@ function Journal({ onAddEntry, entries }) {
 
     setIsAnalyzing(true)
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const analysis = analyzeMood(text)
-      onAddEntry({
-        text: text.trim(),
-        ...analysis
+    try {
+      const res = await fetch('/api/journal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
       })
+
+      const savedEntry = await res.json()
+      setEntries(prev => [savedEntry, ...prev])
       setText('')
+    } catch (err) {
+      console.error('Error saving entry:', err)
+      alert('Could not save entry')
+    } finally {
       setIsAnalyzing(false)
-    }, 1500)
+    }
   }
 
   const getMoodColor = (mood) => {
@@ -69,7 +64,7 @@ function Journal({ onAddEntry, entries }) {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="How are you feeling today? Write about your thoughts, experiences, or anything on your mind..."
+            placeholder="How are you feeling today? Write about your thoughts..."
             className="journal-textarea"
             rows="8"
             disabled={isAnalyzing}
