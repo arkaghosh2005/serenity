@@ -1,5 +1,4 @@
-node_modules/ //ignore node modules of every directory
-
+#ignore node modules of every directory
 node_modules
 
 .env
