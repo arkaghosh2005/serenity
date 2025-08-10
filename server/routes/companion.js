@@ -5,6 +5,7 @@ const { GoogleGenAI } = require("@google/genai");
 const dotenv = require("dotenv");
 dotenv.config(); //load the environment variables from .env!
 
+// TODO for developers: add a .env file containing gemini API key in server folder (variable: API_KEY) ! 
 const genAI = new GoogleGenAI({
     apiKey: process.env.API_KEY,
 });
