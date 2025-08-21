@@ -1,6 +1,4 @@
-Here’s a clean, professional, and minimalist **README.md** draft for your project:
 
----
 
 ## Serenity
 
