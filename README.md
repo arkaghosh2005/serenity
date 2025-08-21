@@ -19,7 +19,7 @@ It helps users track moods, write and save journals, gain AI-driven insights, an
 
 ### 🛠️ Tech Stack
 
-* **Frontend:** React (with Tailwind / Chart.js planned)
+* **Frontend:** React (with Chart.js )
 * **Backend:** Node.js + Express.js
 * **Database:** MongoDB
 * **AI Integration:** Planned integration with LLM APIs
